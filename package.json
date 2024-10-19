@@ -10,8 +10,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "anime-images-api": "^2.0.0",
+    "axios": "^1.7.7",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "vajra-api": "^1.0.0"
   }
 }
