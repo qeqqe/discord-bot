@@ -1,53 +1,132 @@
-const { EmbedBuilder } = require("discord.js");
+const {
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+} = require("discord.js");
 const axios = require("axios");
 
-const Media = async (interaction) => {
+const Lewd = async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
-  if (interaction.commandName === "media") {
+  if (interaction.commandName === "lewd") {
+    if (interaction.user.id !== "975440571302805608") {
+      return interaction.reply({
+        content: "You are not authorized to use this command.",
+        ephemeral: true,
+      });
+    }
+
+    if (!interaction.channel.nsfw) {
+      return interaction.reply({
+        content: "Use this command in a NSFW channel!",
+        ephemeral: true,
+      });
+    }
+
     await interaction.deferReply();
 
     try {
-      const type = interaction.options.getString("type");
-      const search = interaction.options.getString("search");
+      const category = interaction.options.getString("category");
 
-      if (!type) {
-        return interaction.editReply("Choose a type (sfw or nsfw).");
+      if (!category) {
+        return interaction.editReply("Please choose a category.");
       }
 
-      let imageUrl;
-      if (type.toLowerCase() === "sfw") {
-        const response = await axios.get(
-          `https://api.waifu.pics/sfw/${search ? search : "hug"}`
-        );
-        imageUrl = response.data.url;
-      } else if (type.toLowerCase() === "nsfw") {
-        if (!interaction.channel.nsfw) {
-          return interaction.editReply(
-            "Use this command in a NSFW channel mf!"
-          );
-        }
-        const response = await axios.get(
-          `https://api.waifu.pics/nsfw/${search ? search : "waifu"}`
-        );
-        imageUrl = response.data.url;
-      } else {
-        return interaction.editReply(
-          "Invalid type. Please use 'sfw' or 'nsfw'."
-        );
-      }
-
-      const embed = new EmbedBuilder()
-        .setTitle(`${search.toUpperCase()} Image`)
-        .setImage(imageUrl)
-        .setColor("Random");
-
-      await interaction.editReply({ embeds: [embed] });
+      await fetchAndSendImage(interaction, category);
     } catch (error) {
-      console.error("Error in LewdCommand:", error);
-      await interaction.editReply("Error while fetching the image.");
+      console.error("Error in Lewd Command:", error);
+      await interaction.editReply(
+        "An error occurred while processing your command."
+      );
     }
   }
 };
 
-module.exports = Media;
+const fetchAndSendImage = async (interaction, category) => {
+  try {
+    const response = await axios.get(
+      `https://api.waifu.im/search/?included_tags=${category}&is_nsfw=true`
+    );
+
+    if (!response.data.images || response.data.images.length === 0) {
+      return interaction.editReply("No image found for this category.");
+    }
+
+    const imageUrl = response.data.images[0].url;
+
+    const embed = new EmbedBuilder()
+      .setTitle(`${category.toUpperCase()} Image`)
+      .setImage(imageUrl)
+      .setColor("Random");
+
+    const refreshButton = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId(`refresh_${category}`)
+        .setLabel("Refresh")
+        .setStyle(ButtonStyle.Primary)
+    );
+
+    await interaction.editReply({
+      embeds: [embed],
+      components: [refreshButton],
+    });
+  } catch (error) {
+    console.error("Error fetching image:", error);
+    await interaction.editReply(
+      "Error fetching image. Please try again later."
+    );
+  }
+};
+
+const handleRefresh = async (interaction) => {
+  if (!interaction.isButton()) return;
+
+  const [action, category] = interaction.customId.split("_");
+  if (action !== "refresh") return;
+
+  if (!interaction.channel.nsfw) {
+    return interaction.reply({
+      content: "This button can only be used in NSFW channels!",
+      ephemeral: true,
+    });
+  }
+
+  await interaction.deferReply();
+
+  try {
+    const response = await axios.get(
+      `https://api.waifu.im/search/?included_tags=${category}&is_nsfw=true`
+    );
+
+    if (!response.data.images || response.data.images.length === 0) {
+      return interaction.editReply("No image found for this category.");
+    }
+
+    const imageUrl = response.data.images[0].url;
+
+    const embed = new EmbedBuilder()
+      .setTitle(`${category.toUpperCase()} Image (Refreshed)`)
+      .setImage(imageUrl)
+      .setColor("Random");
+
+    const refreshButton = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId(`refresh_${category}`)
+        .setLabel("Refresh")
+        .setStyle(ButtonStyle.Primary)
+    );
+
+    await interaction.editReply({
+      embeds: [embed],
+      components: [refreshButton],
+    });
+  } catch (error) {
+    console.error("Error in handleRefresh:", error);
+    await interaction.editReply(
+      "An error occurred while refreshing the image."
+    );
+  }
+};
+
+module.exports = { Lewd, handleRefresh };

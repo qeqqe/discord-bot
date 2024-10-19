@@ -12,7 +12,7 @@ const { Weather } = require("./components/WeatherCommand");
 const UserPing = require("./components/UserPingReacts");
 const CustomMessageReplies = require("./components/CustomMessageReplies");
 const { AssignUserRole, RemoveUserRole } = require("./components/AddRole");
-const Media = require("./components/Lewd");
+const Media = require("./components/Media");
 const { Ping, Echo } = require("./components/SlashCommands");
 const {
   Kick,
@@ -24,6 +24,7 @@ const {
 const { RandomJoke } = require("./components/RandomJokeGenerator");
 const CatImage = require("./components/CatImageApi");
 const { UserAvatar, UserBanner } = require("./components/UserAvatarBanner");
+const { Lewd, handleRefresh } = require("./components/Lewd");
 dotenv.config();
 const BOT_PREFIX = "!";
 
@@ -64,10 +65,10 @@ const commands = [
         ],
       },
       {
-        name: "search",
-        description: "Search for any category related to the image",
-        required: false,
+        name: "category",
+        description: "Search for a specific category",
         type: ApplicationCommandOptionType.String,
+        required: false,
       },
     ],
   },
@@ -204,6 +205,84 @@ const commands = [
       },
     ],
   },
+  {
+    name: "lewd",
+    description: "Get a lewd image",
+    options: [
+      {
+        name: "category",
+        description: "The category of the lewd image you want",
+        required: true,
+        type: ApplicationCommandOptionType.String,
+        choices: [
+          {
+            name: "maid",
+            value: "maid",
+          },
+          {
+            name: "waifu",
+            value: "waifu",
+          },
+          {
+            name: "marin-kitagawa",
+            value: "marin-kitagawa",
+          },
+          {
+            name: "mori-calliope",
+            value: "mori-calliope",
+          },
+          {
+            name: "raiden-shogun",
+            value: "raiden-shogun",
+          },
+          {
+            name: "oppai",
+            value: "oppai",
+          },
+          {
+            name: "selfies",
+            value: "selfies",
+          },
+          {
+            name: "uniform",
+            value: "uniform",
+          },
+          {
+            name: "kamisato-ayaka",
+            value: "kamisato-ayaka",
+          },
+          {
+            name: "ass",
+            value: "ass",
+          },
+          {
+            name: "hentai",
+            value: "hentai",
+          },
+          {
+            name: "milf",
+            value: "milf",
+          },
+          {
+            name: "oral",
+            value: "oral",
+          },
+          {
+            name: "paizuri",
+            value: "paizuri",
+          },
+          {
+            name: "ecchi",
+            value: "ecchi",
+          },
+          {
+            name: "ero",
+            value: "ero",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 const rest = new REST({ version: "10" }).setToken(process.env.BOT_TOKEN_KEY);
@@ -240,6 +319,37 @@ client.on("interactionCreate", RandomJoke);
 client.on("interactionCreate", Weather);
 client.on("interactionCreate", AiChatBot);
 client.on("interactionCreate", Media);
+
+client.on("interactionCreate", async (interaction) => {
+  try {
+    if (interaction.isCommand()) {
+      if (interaction.commandName === "lewd") {
+        await Lewd(interaction);
+      }
+    } else if (interaction.isButton()) {
+      if (interaction.customId.startsWith("refresh_")) {
+        await handleRefresh(interaction);
+      }
+    }
+  } catch (error) {
+    console.error("Error handling Lewd interaction:", error);
+    try {
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction.reply({
+          content: "An error occurred while processing your request.",
+          ephemeral: true,
+        });
+      } else {
+        await interaction.followUp({
+          content: "An error occurred while processing your request.",
+          ephemeral: true,
+        });
+      }
+    } catch (replyError) {
+      console.error("Error sending error message:", replyError);
+    }
+  }
+});
 
 client.on("messageCreate", CustomMessageReplies);
 client.on("messageCreate", BotPing);
