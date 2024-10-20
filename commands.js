@@ -184,6 +184,30 @@ const commands = [
     ],
   },
   {
+    name: "reminder",
+    description: "Set a reminder",
+    options: [
+      {
+        name: "duration",
+        description: "The duration of the reminder",
+        type: ApplicationCommandOptionType.Integer,
+        required: true,
+      },
+      {
+        name: "time-unit",
+        description: "The unit of time (seconds, minutes, hours, days)",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+        choices: [
+          { name: "Seconds", value: "seconds" },
+          { name: "Minutes", value: "minutes" },
+          { name: "Hours", value: "hours" },
+          { name: "Days", value: "days" },
+        ],
+      },
+    ],
+  },
+  {
     name: "lewd",
     description: "Get a lewd image",
     options: [

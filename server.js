@@ -20,6 +20,7 @@ const CatImage = require("./components/CatImageApi");
 const { UserAvatar, UserBanner } = require("./components/UserAvatarBanner");
 const { Lewd, handleRefresh: handleLewdRefresh } = require("./components/Lewd");
 const EightBall = require("./components/8Ball");
+const { Reminder } = require("./components/Reminder");
 const {
   Sussy,
   handleRefresh: handleSussyRefresh,
@@ -72,6 +73,7 @@ client.on("interactionCreate", UserBanner);
 client.on("interactionCreate", RandomJoke);
 client.on("interactionCreate", Weather);
 client.on("interactionCreate", EightBall);
+client.on("interactionCreate", Reminder);
 client.on("interactionCreate", async (interaction) => {
   try {
     if (interaction.isCommand()) {
