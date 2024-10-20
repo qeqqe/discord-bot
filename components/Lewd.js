@@ -51,15 +51,27 @@ const fetchAndSendImage = async (interaction, tags) => {
       )}`
     );
 
-    if (!response.data || response.data.length === 0) {
+    if (
+      !response.data ||
+      (Array.isArray(response.data) && response.data.length === 0)
+    ) {
       return interaction.editReply({
-        content: "No images found for these tags.",
+        content: `No images found for tags: ${tags}. Try different tags or check your spelling.`,
         ephemeral: true,
       });
     }
 
-    const randomIndex = Math.floor(Math.random() * response.data.length);
-    const imageUrl = response.data[randomIndex].file_url;
+    let posts = Array.isArray(response.data) ? response.data : [response.data];
+
+    if (posts.length === 0) {
+      return interaction.editReply({
+        content: `No images found for tags: ${tags}. Try different tags or check your spelling.`,
+        ephemeral: true,
+      });
+    }
+
+    const randomIndex = Math.floor(Math.random() * posts.length);
+    const imageUrl = posts[randomIndex].file_url;
 
     const embed = new EmbedBuilder()
       .setTitle(`Image for tags: ${tags}`)
@@ -80,7 +92,8 @@ const fetchAndSendImage = async (interaction, tags) => {
   } catch (error) {
     console.error("Error fetching image:", error);
     await interaction.editReply({
-      content: "Error fetching image. Please try again later.",
+      content: `Error fetching image for tags: ${tags}. Please try again later.`,
+      ephemeral: true,
     });
   }
 };
@@ -88,8 +101,8 @@ const fetchAndSendImage = async (interaction, tags) => {
 const handleRefresh = async (interaction) => {
   if (!interaction.isButton()) return;
 
-  const [action, ...tagsParts] = interaction.customId.split("_");
-  if (action !== "refresh") return;
+  const [, command, ...tagsParts] = interaction.customId.split("_");
+  if (command !== "lewd") return;
 
   const tags = tagsParts.join("_");
 
@@ -109,15 +122,27 @@ const handleRefresh = async (interaction) => {
       )}`
     );
 
-    if (!response.data || response.data.length === 0) {
+    if (
+      !response.data ||
+      (Array.isArray(response.data) && response.data.length === 0)
+    ) {
       return interaction.editReply({
-        content: "No images found for these tags.",
+        content: `No images found for tags: ${tags}. Try different tags or check your spelling.`,
         ephemeral: true,
       });
     }
 
-    const randomIndex = Math.floor(Math.random() * response.data.length);
-    const imageUrl = response.data[randomIndex].file_url;
+    let posts = Array.isArray(response.data) ? response.data : [response.data];
+
+    if (posts.length === 0) {
+      return interaction.editReply({
+        content: `No images found for tags: ${tags}. Try different tags or check your spelling.`,
+        ephemeral: true,
+      });
+    }
+
+    const randomIndex = Math.floor(Math.random() * posts.length);
+    const imageUrl = posts[randomIndex].file_url;
 
     const embed = new EmbedBuilder()
       .setTitle(`Image for tags: ${tags} (Refreshed)`)
@@ -126,7 +151,7 @@ const handleRefresh = async (interaction) => {
 
     const refreshButton = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setCustomId(`refresh_${tags}`)
+        .setCustomId(`refresh_lewd_${tags}`)
         .setLabel("Refresh")
         .setStyle(ButtonStyle.Primary)
     );
@@ -138,7 +163,8 @@ const handleRefresh = async (interaction) => {
   } catch (error) {
     console.error("Error in handleRefresh:", error);
     await interaction.editReply({
-      content: "An error occurred while refreshing the image.",
+      content: `An error occurred while refreshing the image for tags: ${tags}. Please try again later.`,
+      ephemeral: true,
     });
   }
 };
