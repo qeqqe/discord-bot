@@ -1,7 +1,7 @@
 const messages = {
-  hello: "hillo",
+  // hello: "hillo",
   hawk: "tuah",
-  skibdi: "Shut the hell up",
+  // skibdi: "Shut the hell up",
   shiv: "oh do you mean the bald head lord <@579034358028042264>",
 };
 

@@ -24,13 +24,19 @@ const {
 const { RandomJoke } = require("./components/RandomJokeGenerator");
 const CatImage = require("./components/CatImageApi");
 const { UserAvatar, UserBanner } = require("./components/UserAvatarBanner");
-const { Lewd, handleRefresh } = require("./components/Lewd");
+const { Lewd, handleRefresh: handleLewdRefresh } = require("./components/Lewd");
+const EightBall = require("./components/8Ball");
+const {
+  Sussy,
+  handleRefresh: handleSussyRefresh,
+} = require("./components/sussy");
 dotenv.config();
 const BOT_PREFIX = "!";
 
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
   ],
@@ -43,46 +49,6 @@ const commands = [
   {
     name: "ping",
     description: "Replies with Pong!",
-  },
-  {
-    name: "media",
-    description: "Get an image",
-    options: [
-      {
-        name: "type",
-        description: "Choose type of the image: 'sfw' or 'nsfw'",
-        required: true,
-        type: ApplicationCommandOptionType.String,
-        choices: [
-          {
-            name: "SFW",
-            value: "sfw",
-          },
-          {
-            name: "NSFW",
-            value: "nsfw",
-          },
-        ],
-      },
-      {
-        name: "category",
-        description: "Search for a specific category",
-        type: ApplicationCommandOptionType.String,
-        required: false,
-      },
-    ],
-  },
-  {
-    name: "chat",
-    description: "Chat with the AI bot",
-    options: [
-      {
-        name: "message",
-        description: "The message you want to chat with the AI bot",
-        required: true,
-        type: ApplicationCommandOptionType.String,
-      },
-    ],
   },
   {
     name: "echo",
@@ -206,79 +172,88 @@ const commands = [
     ],
   },
   {
+    name: "media",
+    description: "Get an SFW anime image",
+    options: [
+      {
+        name: "category",
+        description: "Choose a category for the image",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+        choices: [
+          { name: "Waifu", value: "waifu" },
+          { name: "Neko", value: "neko" },
+          { name: "Shinobu", value: "shinobu" },
+          { name: "Megumin", value: "megumin" },
+          { name: "Bully", value: "bully" },
+          { name: "Cuddle", value: "cuddle" },
+          { name: "Cry", value: "cry" },
+          { name: "Hug", value: "hug" },
+          { name: "Kiss", value: "kiss" },
+          { name: "Lick", value: "lick" },
+          { name: "Pat", value: "pat" },
+          { name: "Smug", value: "smug" },
+          { name: "Bonk", value: "bonk" },
+          { name: "Yeet", value: "yeet" },
+          { name: "Blush", value: "blush" },
+          { name: "Smile", value: "smile" },
+          { name: "Wave", value: "wave" },
+          { name: "Highfive", value: "highfive" },
+          { name: "Nom", value: "nom" },
+          { name: "Bite", value: "bite" },
+          { name: "Glomp", value: "glomp" },
+          { name: "Slap", value: "slap" },
+          { name: "Kill", value: "kill" },
+          { name: "Kick", value: "kick" },
+          { name: "Happy", value: "happy" },
+        ],
+      },
+      {
+        name: "user",
+        description: "The user you want to mention with the image",
+        type: ApplicationCommandOptionType.User,
+        required: false,
+      },
+    ],
+  },
+  {
     name: "lewd",
     description: "Get a lewd image",
     options: [
       {
-        name: "category",
-        description: "The category of the lewd image you want",
+        name: "tags",
+        description: "The tags for the lewd image you want",
         required: true,
         type: ApplicationCommandOptionType.String,
+      },
+    ],
+  },
+  {
+    name: "8ball",
+    description: "Ask the magic 8-ball a question",
+    options: [
+      {
+        name: "question",
+        description: "The question you want to ask",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+      },
+    ],
+  },
+  {
+    name: "sussy",
+    description: "Get a NSFW anime image",
+    options: [
+      {
+        name: "category",
+        description: "Choose a category for the image",
+        type: ApplicationCommandOptionType.String,
+        required: false,
         choices: [
-          {
-            name: "maid",
-            value: "maid",
-          },
-          {
-            name: "waifu",
-            value: "waifu",
-          },
-          {
-            name: "marin-kitagawa",
-            value: "marin-kitagawa",
-          },
-          {
-            name: "mori-calliope",
-            value: "mori-calliope",
-          },
-          {
-            name: "raiden-shogun",
-            value: "raiden-shogun",
-          },
-          {
-            name: "oppai",
-            value: "oppai",
-          },
-          {
-            name: "selfies",
-            value: "selfies",
-          },
-          {
-            name: "uniform",
-            value: "uniform",
-          },
-          {
-            name: "kamisato-ayaka",
-            value: "kamisato-ayaka",
-          },
-          {
-            name: "ass",
-            value: "ass",
-          },
-          {
-            name: "hentai",
-            value: "hentai",
-          },
-          {
-            name: "milf",
-            value: "milf",
-          },
-          {
-            name: "oral",
-            value: "oral",
-          },
-          {
-            name: "paizuri",
-            value: "paizuri",
-          },
-          {
-            name: "ecchi",
-            value: "ecchi",
-          },
-          {
-            name: "ero",
-            value: "ero",
-          },
+          { name: "Waifu", value: "waifu" },
+          { name: "Neko", value: "neko" },
+          { name: "Trap", value: "trap" },
+          { name: "Blowjob", value: "blowjob" },
         ],
       },
     ],
@@ -317,22 +292,27 @@ client.on("interactionCreate", UserAvatar);
 client.on("interactionCreate", UserBanner);
 client.on("interactionCreate", RandomJoke);
 client.on("interactionCreate", Weather);
-client.on("interactionCreate", AiChatBot);
-client.on("interactionCreate", Media);
-
+client.on("interactionCreate", EightBall);
 client.on("interactionCreate", async (interaction) => {
   try {
     if (interaction.isCommand()) {
       if (interaction.commandName === "lewd") {
         await Lewd(interaction);
+      } else if (interaction.commandName === "sussy") {
+        await Sussy(interaction);
       }
     } else if (interaction.isButton()) {
       if (interaction.customId.startsWith("refresh_")) {
-        await handleRefresh(interaction);
+        const [, command, ...rest] = interaction.customId.split("_");
+        if (command === "lewd") {
+          await handleLewdRefresh(interaction);
+        } else if (command === "sussy") {
+          await handleSussyRefresh(interaction);
+        }
       }
     }
   } catch (error) {
-    console.error("Error handling Lewd interaction:", error);
+    console.error("Error handling interaction:", error);
     try {
       if (!interaction.replied && !interaction.deferred) {
         await interaction.reply({
@@ -356,5 +336,8 @@ client.on("messageCreate", BotPing);
 client.on("messageCreate", UserPing);
 client.on("messageCreate", AssignUserRole);
 client.on("messageCreate", RemoveUserRole);
+client.on("messageCreate", AiChatBot);
+
+client.on("interactionCreate", Media);
 
 client.login(process.env.BOT_TOKEN_KEY);

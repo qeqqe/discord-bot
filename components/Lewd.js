@@ -24,16 +24,16 @@ const Lewd = async (interaction) => {
       });
     }
 
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     try {
-      const category = interaction.options.getString("category");
+      const tags = interaction.options.getString("tags");
 
-      if (!category) {
-        return interaction.editReply("Please choose a category.");
+      if (!tags) {
+        return interaction.editReply("Please provide search tags.");
       }
 
-      await fetchAndSendImage(interaction, category);
+      await fetchAndSendImage(interaction, tags);
     } catch (error) {
       console.error("Error in Lewd Command:", error);
       await interaction.editReply(
@@ -43,26 +43,32 @@ const Lewd = async (interaction) => {
   }
 };
 
-const fetchAndSendImage = async (interaction, category) => {
+const fetchAndSendImage = async (interaction, tags) => {
   try {
     const response = await axios.get(
-      `https://api.waifu.im/search/?included_tags=${category}&is_nsfw=true`
+      `https://api.rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&limit=100&tags=${encodeURIComponent(
+        tags
+      )}`
     );
 
-    if (!response.data.images || response.data.images.length === 0) {
-      return interaction.editReply("No image found for this category.");
+    if (!response.data || response.data.length === 0) {
+      return interaction.editReply({
+        content: "No images found for these tags.",
+        ephemeral: true,
+      });
     }
 
-    const imageUrl = response.data.images[0].url;
+    const randomIndex = Math.floor(Math.random() * response.data.length);
+    const imageUrl = response.data[randomIndex].file_url;
 
     const embed = new EmbedBuilder()
-      .setTitle(`${category.toUpperCase()} Image`)
+      .setTitle(`Image for tags: ${tags}`)
       .setImage(imageUrl)
       .setColor("Random");
 
     const refreshButton = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setCustomId(`refresh_${category}`)
+        .setCustomId(`refresh_lewd_${tags}`)
         .setLabel("Refresh")
         .setStyle(ButtonStyle.Primary)
     );
@@ -73,17 +79,19 @@ const fetchAndSendImage = async (interaction, category) => {
     });
   } catch (error) {
     console.error("Error fetching image:", error);
-    await interaction.editReply(
-      "Error fetching image. Please try again later."
-    );
+    await interaction.editReply({
+      content: "Error fetching image. Please try again later.",
+    });
   }
 };
 
 const handleRefresh = async (interaction) => {
   if (!interaction.isButton()) return;
 
-  const [action, category] = interaction.customId.split("_");
+  const [action, ...tagsParts] = interaction.customId.split("_");
   if (action !== "refresh") return;
+
+  const tags = tagsParts.join("_");
 
   if (!interaction.channel.nsfw) {
     return interaction.reply({
@@ -92,27 +100,33 @@ const handleRefresh = async (interaction) => {
     });
   }
 
-  await interaction.deferReply();
+  await interaction.deferUpdate();
 
   try {
     const response = await axios.get(
-      `https://api.waifu.im/search/?included_tags=${category}&is_nsfw=true`
+      `https://api.rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&limit=100&tags=${encodeURIComponent(
+        tags
+      )}`
     );
 
-    if (!response.data.images || response.data.images.length === 0) {
-      return interaction.editReply("No image found for this category.");
+    if (!response.data || response.data.length === 0) {
+      return interaction.editReply({
+        content: "No images found for these tags.",
+        ephemeral: true,
+      });
     }
 
-    const imageUrl = response.data.images[0].url;
+    const randomIndex = Math.floor(Math.random() * response.data.length);
+    const imageUrl = response.data[randomIndex].file_url;
 
     const embed = new EmbedBuilder()
-      .setTitle(`${category.toUpperCase()} Image (Refreshed)`)
+      .setTitle(`Image for tags: ${tags} (Refreshed)`)
       .setImage(imageUrl)
       .setColor("Random");
 
     const refreshButton = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
-        .setCustomId(`refresh_${category}`)
+        .setCustomId(`refresh_${tags}`)
         .setLabel("Refresh")
         .setStyle(ButtonStyle.Primary)
     );
@@ -123,9 +137,9 @@ const handleRefresh = async (interaction) => {
     });
   } catch (error) {
     console.error("Error in handleRefresh:", error);
-    await interaction.editReply(
-      "An error occurred while refreshing the image."
-    );
+    await interaction.editReply({
+      content: "An error occurred while refreshing the image.",
+    });
   }
 };
 
