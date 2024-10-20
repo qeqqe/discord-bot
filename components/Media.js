@@ -21,13 +21,13 @@ const Media = async (interaction) => {
             category
               ? category.charAt(0).toUpperCase() + category.slice(1)
               : "Waifu"
-          } Image`
+          }`
         )
         .setImage(imageUrl)
         .setColor("Random");
 
       if (user) {
-        embed.setDescription(`${user}, check this out!`);
+        embed.setDescription(`${user}`);
       }
 
       await interaction.editReply({ embeds: [embed] });
