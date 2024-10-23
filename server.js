@@ -7,6 +7,7 @@ const UserPing = require("./components/UserPingReacts");
 const CustomMessageReplies = require("./components/CustomMessageReplies");
 const { AssignUserRole, RemoveUserRole } = require("./components/AddRole");
 const Media = require("./components/Media");
+const ReactionRoles = require("./components/ReactionRoles");
 const { Ping, Echo } = require("./components/SlashCommands");
 const {
   Kick,
@@ -17,6 +18,7 @@ const {
 } = require("./components/ModerationCommands");
 const { RandomJoke } = require("./components/RandomJokeGenerator");
 const CatImage = require("./components/CatImageApi");
+const DogImage = require("./components/DogImage");
 const { UserAvatar, UserBanner } = require("./components/UserAvatarBanner");
 const { Lewd, handleRefresh: handleLewdRefresh } = require("./components/Lewd");
 const EightBall = require("./components/8Ball");
@@ -62,6 +64,7 @@ client.on("ready", async () => {
 
 client.on("interactionCreate", Ping);
 client.on("interactionCreate", Echo);
+client.on("interactionCreate", DogImage);
 client.on("interactionCreate", Kick);
 client.on("interactionCreate", Ban);
 client.on("interactionCreate", Unban);
@@ -120,5 +123,11 @@ client.on("messageCreate", RemoveUserRole);
 client.on("messageCreate", AiChatBot);
 
 client.on("interactionCreate", Media);
+
+client.on("interactionCreate", async (interaction) => {
+  if (interaction.commandName === "reaction-roles") {
+    await ReactionRoles(interaction, client);
+  }
+});
 
 client.login(process.env.BOT_TOKEN_KEY);

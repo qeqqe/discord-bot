@@ -75,6 +75,10 @@ const commands = [
     description: "silly car image",
   },
   {
+    name: "dog",
+    description: "dog image",
+  },
+  {
     name: "untimeout",
     description: "Un-times out a member",
     options: [
@@ -236,6 +240,10 @@ const commands = [
         ],
       },
     ],
+  },
+  {
+    name: "reaction-roles",
+    description: "Set up reaction roles",
   },
 ];
 
