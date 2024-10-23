@@ -242,8 +242,25 @@ const commands = [
     ],
   },
   {
+    name: "roles",
+    description: "Select your roles",
+  },
+  {
     name: "reaction-roles",
-    description: "Set up reaction roles",
+    description: "Select your roles",
+    options: [
+      {
+        name: "set",
+        description: "Choose the role set",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+        choices: [
+          { name: "Colors", value: "colors" },
+          { name: "RGB", value: "rgb" },
+          // Add more choices as needed
+        ],
+      },
+    ],
   },
 ];
 

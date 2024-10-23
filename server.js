@@ -33,15 +33,26 @@ const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildPresences,
+    GatewayIntentBits.DirectMessages,
   ],
-  partials: [Partials.Message],
+  partials: [
+    Partials.Message,
+    Partials.Channel,
+    Partials.Reaction,
+    Partials.User,
+    Partials.GuildMember,
+  ],
 });
 
 client.setMaxListeners(25);
 
 const commands = require("./commands");
+
+const handleReactionRoles = require("./components/ReactionRoles");
 
 client.on("ready", async () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -125,8 +136,8 @@ client.on("messageCreate", AiChatBot);
 client.on("interactionCreate", Media);
 
 client.on("interactionCreate", async (interaction) => {
-  if (interaction.commandName === "reaction-roles") {
-    await ReactionRoles(interaction, client);
+  if (interaction.isCommand() || interaction.isStringSelectMenu()) {
+    await handleReactionRoles(interaction, client);
   }
 });
 
