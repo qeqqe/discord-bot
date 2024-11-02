@@ -54,17 +54,21 @@ const commands = require("./commands");
 
 const handleReactionRoles = require("./components/ReactionRoles");
 
+const guildIds = ["1275492506414481468", "1302155425587658762"];
+
 client.on("ready", async () => {
   console.log(`Logged in as ${client.user.tag}!`);
 
   try {
     console.log("Started refreshing application (/) commands.");
 
-    const guild = client.guilds.cache.get("1275492506414481468");
-    if (guild) {
-      await guild.commands.set(commands);
-    } else {
-      await client.application.commands.set(commands);
+    for (const guildId of guildIds) {
+      const guild = client.guilds.cache.get(guildId);
+      if (guild) {
+        await guild.commands.set(commands);
+      } else {
+        await client.application.commands.set(commands);
+      }
     }
 
     console.log("Successfully reloaded application (/) commands.");
