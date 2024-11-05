@@ -5,12 +5,18 @@ const {
   ButtonStyle,
 } = require("discord.js");
 const axios = require("axios");
+const { logCommandUsage } = require("./logger");
 
 const Sussy = async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === "sussy") {
-    if (interaction.user.id !== "975440571302805608") {
+    logCommandUsage(interaction.user, interaction.commandName);
+
+    if (
+      interaction.user.id !== "975440571302805608" &&
+      interaction.user.id !== "872782615793524756"
+    ) {
       return interaction.reply({
         content: "You are not authorized to use this command.",
         ephemeral: true,

@@ -5,12 +5,43 @@ const {
   ButtonStyle,
 } = require("discord.js");
 const axios = require("axios");
+const { logCommandUsage } = require("./logger");
+
+const censoredTags = [
+  "loli",
+  "child",
+  "children",
+  "shotta",
+  "shota",
+  "incest",
+  "rape",
+  "bestiality",
+  "underage",
+];
 
 const Lewd = async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   if (interaction.commandName === "lewd") {
-    if (interaction.user.id !== "975440571302805608") {
+    const tags = interaction.options.getString("tags") || "No tags provided";
+    logCommandUsage(
+      interaction.user,
+      `${interaction.commandName} with tags: ${tags}`
+    );
+
+    // Check for censored tags
+    const foundCensoredTag = censoredTags.some((tag) => tags.includes(tag));
+    if (foundCensoredTag) {
+      return interaction.reply({
+        content: "Sending report to Discord.",
+        ephemeral: true,
+      });
+    }
+
+    if (
+      interaction.user.id !== "975440571302805608" &&
+      interaction.user.id !== "872782615793524756"
+    ) {
       return interaction.reply({
         content: "You are not authorized to use this command.",
         ephemeral: true,
@@ -27,8 +58,6 @@ const Lewd = async (interaction) => {
     await interaction.deferReply({ ephemeral: true });
 
     try {
-      const tags = interaction.options.getString("tags");
-
       if (!tags) {
         return interaction.editReply("Please provide search tags.");
       }

@@ -27,6 +27,7 @@ const {
   Sussy,
   handleRefresh: handleSussyRefresh,
 } = require("./components/sussy");
+const { StableDiffusion } = require("./components/StableDiffusion");
 dotenv.config();
 
 const client = new Client({
@@ -92,6 +93,7 @@ client.on("interactionCreate", RandomJoke);
 client.on("interactionCreate", Weather);
 client.on("interactionCreate", EightBall);
 client.on("interactionCreate", Reminder);
+client.on("interactionCreate", StableDiffusion);
 client.on("interactionCreate", async (interaction) => {
   try {
     if (interaction.isCommand()) {

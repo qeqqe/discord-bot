@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType } = require("discord.js");
-
+const { stableDiffusionCommand } = require("./components/StableDiffusion");
 const commands = [
   {
     name: "ping",
@@ -263,5 +263,5 @@ const commands = [
     ],
   },
 ];
-
+commands.push(stableDiffusionCommand);
 module.exports = commands;

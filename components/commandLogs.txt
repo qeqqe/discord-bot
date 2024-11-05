@@ -1,0 +1,10 @@
+2024-11-02T12:07:00.328Z - User: qeqqer executed command: ping
+2024-11-02T12:07:07.329Z - User: qeqqer executed command: ping
+2024-11-02T17:35:37.210Z - User: just.a.normal.black.cat executed command: lewd
+2024-11-02T17:40:09.147Z - User: qeqqer executed command: lewd with tags: random
+2024-11-02T17:45:15.005Z - User: just.a.normal.black.cat executed command: lewd with tags: gay
+2024-11-02T17:47:03.079Z - User: just.a.normal.black.cat executed command: lewd with tags: chubby
+2024-11-02T17:47:19.537Z - User: just.a.normal.black.cat executed command: lewd with tags: chubby_gay
+2024-11-04T04:15:25.037Z - User: qeqqer executed command: lewd with tags: tits
+2024-11-04T04:17:42.979Z - User: qeqqer executed command: lewd with tags: tits
+2024-11-04T04:18:29.677Z - User: qeqqer executed command: lewd with tags: pussy
