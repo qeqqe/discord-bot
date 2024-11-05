@@ -1,9 +1,7 @@
-// components/StableDiffusion.js
 const axios = require("axios");
 const { AttachmentBuilder } = require("discord.js");
 const { ApplicationCommandOptionType } = require("discord.js");
 
-// Command definition to add to commands.js
 const stableDiffusionCommand = {
   name: "generate",
   description: "Generate an image using Stable Diffusion",
@@ -41,17 +39,7 @@ const stableDiffusionCommand = {
       type: ApplicationCommandOptionType.String,
       choices: [
         { name: "DPM++ 2M", value: "dpm_pp" },
-        // // add more in future
-      ],
-    },
-    {
-      name: "schedule_type",
-      description: "The schedule type to use (default: Karras)",
-      required: false,
-      type: ApplicationCommandOptionType.String,
-      choices: [
-        { name: "Karras", value: "karras" },
-        // add more in future
+        // add more
       ],
     },
   ],
@@ -71,8 +59,6 @@ async function StableDiffusion(interaction) {
     const seed = interaction.options.getInteger("seed") || -1;
     const sampling_method =
       interaction.options.getString("sampling_method") || "dpm_pp";
-    const schedule_type =
-      interaction.options.getString("schedule_type") || "karras";
 
     const payload = {
       prompt: prompt,
@@ -82,18 +68,10 @@ async function StableDiffusion(interaction) {
       batch_size: 1,
       n_iter: 1,
       cfg_scale: 7,
-      width: 512,
-      height: 512,
+      width: 1024,
+      height: 1024,
       sampler_name: sampling_method,
       eta: 0,
-      override_settings: {
-        CLIP_stop_at_last_layerhalf: false,
-        S_churn: 0,
-        S_tmin: 0,
-        S_tmax: 0.95,
-        S_noise: 1,
-        schedule_type: schedule_type,
-      },
     };
 
     // send req
