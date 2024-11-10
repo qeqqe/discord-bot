@@ -262,6 +262,20 @@ const commands = [
       },
     ],
   },
+  {
+    name: "purge",
+    description: "Delete a specified number of messages",
+    options: [
+      {
+        name: "amount",
+        description: "Number of messages to delete (1-100)",
+        required: true,
+        type: ApplicationCommandOptionType.Integer,
+        minValue: 1,
+        maxValue: 100,
+      },
+    ],
+  },
 ];
 commands.push(stableDiffusionCommand);
 module.exports = commands;

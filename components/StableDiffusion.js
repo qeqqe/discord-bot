@@ -34,13 +34,39 @@ const stableDiffusionCommand = {
     },
     {
       name: "sampling_method",
-      description: "The sampling method to use (default: DPM++ 2M)",
+      description: "The sampling method to use (default: DPM++ 2M Karras)",
       required: false,
       type: ApplicationCommandOptionType.String,
       choices: [
-        { name: "DPM++ 2M", value: "dpm_pp" },
-        // add more
+        { name: "DPM++ 2M Karras", value: "DPM++ 2M Karras" },
+        { name: "DPM++ 3M SDE Karras", value: "DPM++ 3M SDE Karras" },
       ],
+    },
+    {
+      name: "width",
+      description:
+        "Width of the generated image (default: 1024, min: 64, max: 1024)",
+      required: false,
+      type: ApplicationCommandOptionType.Integer,
+      minValue: 64,
+      maxValue: 1024,
+    },
+    {
+      name: "height",
+      description:
+        "Height of the generated image (default: 1024, min: 64, max: 1024)",
+      required: false,
+      type: ApplicationCommandOptionType.Integer,
+      minValue: 64,
+      maxValue: 1024,
+    },
+    {
+      name: "guidance_scale",
+      description: "Guidance scale (default: 8, min: 1, max: 20)",
+      required: false,
+      type: ApplicationCommandOptionType.Integer,
+      minValue: 1,
+      maxValue: 20,
     },
   ],
 };
@@ -58,7 +84,11 @@ async function StableDiffusion(interaction) {
     const steps = interaction.options.getInteger("steps") || 20;
     const seed = interaction.options.getInteger("seed") || -1;
     const sampling_method =
-      interaction.options.getString("sampling_method") || "dpm_pp";
+      interaction.options.getString("sampling_method") || "DPM++ 2M Karras";
+    const width = interaction.options.getInteger("width") || 512;
+    const height = interaction.options.getInteger("height") || 512;
+    const guidance_scale =
+      interaction.options.getInteger("guidance_scale") || 8;
 
     const payload = {
       prompt: prompt,
@@ -67,14 +97,13 @@ async function StableDiffusion(interaction) {
       seed: seed,
       batch_size: 1,
       n_iter: 1,
-      cfg_scale: 7,
-      width: 1024,
-      height: 1024,
+      cfg_scale: guidance_scale,
+      width: width,
+      height: height,
       sampler_name: sampling_method,
       eta: 0,
     };
 
-    // send req
     const response = await axios.post(
       "http://127.0.0.1:7860/sdapi/v1/txt2img",
       payload
@@ -84,17 +113,16 @@ async function StableDiffusion(interaction) {
       throw new Error("No image data received from Stable Diffusion");
     }
 
-    // base64 to buffer
+    const actualSamplingMethod = response.data.info.sampling_method;
+
     const imageBuffer = Buffer.from(response.data.images[0], "base64");
 
-    // dc attachment
     const attachment = new AttachmentBuilder(imageBuffer, {
       name: "generated-image.png",
     });
 
-    // send res
     await interaction.editReply({
-      content: `Generated image for prompt: "${prompt}"`,
+      content: `Generated image for prompt: "${prompt}" using "${actualSamplingMethod}" sampling method.`,
       files: [attachment],
     });
   } catch (error) {

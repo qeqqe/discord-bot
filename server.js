@@ -9,6 +9,7 @@ const { AssignUserRole, RemoveUserRole } = require("./components/AddRole");
 const Media = require("./components/Media");
 const ReactionRoles = require("./components/ReactionRoles");
 const { Ping, Echo } = require("./components/SlashCommands");
+const { Purge } = require("./components/Purge");
 const {
   Kick,
   Ban,
@@ -55,7 +56,11 @@ const commands = require("./commands");
 
 const handleReactionRoles = require("./components/ReactionRoles");
 
-const guildIds = ["1275492506414481468", "1302155425587658762"];
+const guildIds = [
+  "1275492506414481468",
+  "1302155425587658762",
+  "1208703376121139241",
+];
 
 client.on("ready", async () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -88,6 +93,7 @@ client.on("interactionCreate", Timeout);
 client.on("interactionCreate", UnTimeout);
 client.on("interactionCreate", CatImage);
 client.on("interactionCreate", UserAvatar);
+client.on("interactionCreate", Purge);
 client.on("interactionCreate", UserBanner);
 client.on("interactionCreate", RandomJoke);
 client.on("interactionCreate", Weather);
