@@ -122,7 +122,7 @@ async function StableDiffusion(interaction) {
     });
 
     await interaction.editReply({
-      content: `Generated image for prompt: "${prompt}" using "${actualSamplingMethod}" sampling method.`,
+      content: `Generated image using "${actualSamplingMethod}" sampling method.`,
       files: [attachment],
     });
   } catch (error) {
