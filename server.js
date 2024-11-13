@@ -29,6 +29,7 @@ const {
   handleRefresh: handleSussyRefresh,
 } = require("./components/sussy");
 const { StableDiffusion } = require("./components/StableDiffusion");
+const Resize = require("./components/Resize");
 dotenv.config();
 
 const client = new Client({
@@ -150,6 +151,12 @@ client.on("interactionCreate", Media);
 client.on("interactionCreate", async (interaction) => {
   if (interaction.isCommand() || interaction.isStringSelectMenu()) {
     await handleReactionRoles(interaction, client);
+  }
+});
+
+client.on("interactionCreate", async (interaction) => {
+  if (interaction.commandName === "resize") {
+    await Resize.execute(interaction);
   }
 });
 

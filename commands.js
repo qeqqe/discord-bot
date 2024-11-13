@@ -276,6 +276,34 @@ const commands = [
       },
     ],
   },
+  {
+    name: "resize",
+    description: "Resize an image",
+    options: [
+      {
+        name: "image",
+        description: "The image to resize",
+        required: true,
+        type: ApplicationCommandOptionType.Attachment,
+      },
+      {
+        name: "width",
+        description: "New width in pixels",
+        required: true,
+        type: ApplicationCommandOptionType.Integer,
+        minValue: 1,
+        maxValue: 4096,
+      },
+      {
+        name: "height",
+        description: "New height in pixels",
+        required: true,
+        type: ApplicationCommandOptionType.Integer,
+        minValue: 1,
+        maxValue: 4096,
+      },
+    ],
+  },
 ];
 commands.push(stableDiffusionCommand);
 module.exports = commands;
